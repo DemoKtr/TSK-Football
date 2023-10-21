@@ -20,7 +20,9 @@ public class Ball : MonoBehaviour
     [SerializeField] private Vector3 forcePosition = new Vector3(0.0f,0.0f,0.0f); // tak naprawde raduius vectorowo
     private Vector3 force = new Vector3(0.0f,0.0f,0.0f); // odwrotnosc wwektora pozycji
     private Vector3 FrictionForce = new Vector3();
-    
+    private Vector3 FrictionForceMomentum = new Vector3();
+
+    private Transform thisTransform;
     
     //stale
     private const float forceTime = 0.01f;
@@ -37,6 +39,7 @@ public class Ball : MonoBehaviour
         // Start is called before the first frame update
     void Start()
     {
+        this.thisTransform = GetComponent<Transform>();
         calculate_Initial_Velocities();
         
     }
@@ -68,10 +71,12 @@ public class Ball : MonoBehaviour
 
     public Vector3 calculateColisionForce()
     {
+        //x y z to wektor odkształcenia
+        
         Vector3 collisionForce= new Vector3(0.0f,0.0f,0.0f);
-        collisionForce.x = damping * linearVelocity.x + stifftness * 1 + kd * linearVelocity.x * linearVelocity.x;
-        collisionForce.y = damping * linearVelocity.y + stifftness * 1 + kd * linearVelocity.x * Mathf.Abs(linearVelocity.x);
-        collisionForce.z = damping * linearVelocity.z + stifftness * 1 + kd * linearVelocity.z * linearVelocity.z;
+        collisionForce.x = damping * linearVelocity.x + stifftness * x + kd * linearVelocity.x * linearVelocity.x;
+        collisionForce.y = damping * linearVelocity.y + stifftness * y + kd * linearVelocity.x * Mathf.Abs(linearVelocity.x);
+        collisionForce.z = damping * linearVelocity.z + stifftness * z + kd * linearVelocity.z * linearVelocity.z;
         return collisionForce;
     }
 
@@ -83,11 +88,43 @@ public class Ball : MonoBehaviour
         linearAcceleration.y = (-(kd*linearVelocity.y*Mathf.Abs(linearVelocity.y))+km*linearVelocity.z*Mathf.Abs(linearVelocity.z)-km*Mathf.Pow(linearVelocity.x,2)+mass*g)/mass;
         linearAcceleration.x = (-(km*Mathf.Pow(linearVelocity.x,2))+km*linearVelocity.y*Mathf.Abs(linearVelocity.y)+kd*Mathf.Pow(linearVelocity.z,2))/mass;
     }
-
+    public void calcualteCoriolisFoce()
+    { 
+        
+    }
+    public void calculateEarthAngularVelocity()
+    {
+        
+    }
     public void calculateFrictionForce()
     {
         //kierunek tej siły
         float FrictionForceMagnitude = mass * g * friction;
         FrictionForce = new Vector3((linearVelocity.x/linearVelocity.magnitude), (linearVelocity.y/linearVelocity.magnitude), (linearVelocity.z/linearVelocity.magnitude));
+        FrictionForce = FrictionForce * FrictionForceMagnitude;
+        
     }
+
+    public void calculatePosition(float dt)
+    {
+        this.transform.position = linearVelocity * dt + ((linearAcceleration * dt * dt) / 2);
+
+    }
+    public void calculateRotation(float dt)
+    {
+        this.transform.Rotate(
+            angularVelocity.x * dt + ((angularAcceleration.x*dt*dt)/2), 
+            angularVelocity.y * dt + ((angularAcceleration.y*dt*dt)/2), 
+            angularVelocity.z* dt + ((angularAcceleration.z*dt*dt)/2),
+            Space.Self);
+    }
+    public void calculateLinearVelocity(float dt)
+    {
+        linearVelocity += linearAcceleration * dt;
+    }
+    public void calculateAngularVelocity(float dt)
+    {
+        angularVelocity += angularAcceleration * dt;
+    }
+
 }
