@@ -8,6 +8,7 @@ public class Ball : MonoBehaviour
     [SerializeField] private float mass;
     [SerializeField] private float friction;
     [SerializeField] private float radius;
+    private Vector3 EarthAngularVelocity=new Vector3(0.0f,0.0000727f,0f);
     
 
 
@@ -17,10 +18,12 @@ public class Ball : MonoBehaviour
     private Vector3 angularVelocity = new Vector3(0.0f,0.0f,0.0f);
     private Vector3 linearAcceleration = new Vector3(0.0f,0.0f,0.0f);
     private Vector3 angularAcceleration = new Vector3(0.0f,0.0f,0.0f);
+    private Vector3 deviation = new Vector3(1f,1f,1f);
     [SerializeField] private Vector3 forcePosition = new Vector3(0.0f,0.0f,0.0f); // tak naprawde raduius vectorowo
     private Vector3 force = new Vector3(0.0f,0.0f,0.0f); // odwrotnosc wwektora pozycji
     private Vector3 FrictionForce = new Vector3();
     private Vector3 FrictionForceMomentum = new Vector3();
+    private Vector3 coriolisForce = new Vector3();
 
     private Transform thisTransform;
     
@@ -74,9 +77,9 @@ public class Ball : MonoBehaviour
         //x y z to wektor odkształcenia
         
         Vector3 collisionForce= new Vector3(0.0f,0.0f,0.0f);
-        collisionForce.x = damping * linearVelocity.x + stifftness * x + kd * linearVelocity.x * linearVelocity.x;
-        collisionForce.y = damping * linearVelocity.y + stifftness * y + kd * linearVelocity.x * Mathf.Abs(linearVelocity.x);
-        collisionForce.z = damping * linearVelocity.z + stifftness * z + kd * linearVelocity.z * linearVelocity.z;
+        collisionForce.x = damping * linearVelocity.x + stifftness * deviation.x + kd * linearVelocity.x * linearVelocity.x;
+        collisionForce.y = damping * linearVelocity.y + stifftness * deviation.y + kd * linearVelocity.x * Mathf.Abs(linearVelocity.x);
+        collisionForce.z = damping * linearVelocity.z + stifftness * deviation.z + kd * linearVelocity.z * linearVelocity.z;
         return collisionForce;
     }
 
@@ -84,18 +87,15 @@ public class Ball : MonoBehaviour
     { 
         //To Do dodać na końce efekt coriolisa
         
-        linearAcceleration.x = (km*linearVelocity.y*Mathf.Abs(linearVelocity.y)+km*linearVelocity.z*Mathf.Abs(linearVelocity.z)-kd*Mathf.Pow(linearVelocity.x,2))/mass;
-        linearAcceleration.y = (-(kd*linearVelocity.y*Mathf.Abs(linearVelocity.y))+km*linearVelocity.z*Mathf.Abs(linearVelocity.z)-km*Mathf.Pow(linearVelocity.x,2)+mass*g)/mass;
-        linearAcceleration.x = (-(km*Mathf.Pow(linearVelocity.x,2))+km*linearVelocity.y*Mathf.Abs(linearVelocity.y)+kd*Mathf.Pow(linearVelocity.z,2))/mass;
+        linearAcceleration.x = (km*linearVelocity.y*Mathf.Abs(linearVelocity.y)+km*linearVelocity.z*Mathf.Abs(linearVelocity.z)-kd*Mathf.Pow(linearVelocity.x,2)+coriolisForce.x)/mass;
+        linearAcceleration.y = (-(kd*linearVelocity.y*Mathf.Abs(linearVelocity.y))+km*linearVelocity.z*Mathf.Abs(linearVelocity.z)-km*Mathf.Pow(linearVelocity.x,2)+mass*g+coriolisForce.y)/mass;
+        linearAcceleration.x = (-(km*Mathf.Pow(linearVelocity.x,2))+km*linearVelocity.y*Mathf.Abs(linearVelocity.y)+kd*Mathf.Pow(linearVelocity.z,2)+coriolisForce.z)/mass;
     }
     public void calcualteCoriolisFoce()
-    { 
-        
-    }
-    public void calculateEarthAngularVelocity()
     {
-        
+        coriolisForce = 2 * mass * Vector3.Cross(EarthAngularVelocity , linearVelocity);
     }
+    
     public void calculateFrictionForce()
     {
         //kierunek tej siły
