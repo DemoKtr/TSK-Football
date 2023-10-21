@@ -54,6 +54,11 @@ public class Ball : MonoBehaviour
         //
     }
 
+    public void OnCollisionEnter(Collision other)
+    {
+        calculateColisionForce();
+    }
+
     public void calculate_Initial_Velocities()
     {
         
