@@ -2,12 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Ball : MonoBehaviour
 {
+    [SerializeField] Slider ForceSlider;        //zaufaj, tak trzeba bo unity nas nie lubi ~ Przemysław
+    [SerializeField] Slider MassSlider;
+
     [SerializeField] private float mass;
     [SerializeField] private float friction;
-    [SerializeField] private float radius;
+    [SerializeField] public float radius;
     private Vector3 EarthAngularVelocity=new Vector3(0.0f,0.0000727f,0f);
     
 
@@ -130,6 +134,11 @@ public class Ball : MonoBehaviour
     public void calculateAngularVelocity(float dt)
     {
         angularVelocity += angularAcceleration * dt;
+    }
+    public void Launch()
+    {
+        mass = MassSlider.value;
+        initialForce = ForceSlider.value; //zaufaj ~Przemysław
     }
 
 }
