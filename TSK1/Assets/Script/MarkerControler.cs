@@ -11,6 +11,7 @@ public class MarkerControler : MonoBehaviour
     bool CanBePlaced;
     RaycastHit hit;
     [SerializeField] LaunchButtonController launchButtonController;
+    public Vector3 InitialPosition;
 
 
     private void Start()
@@ -66,6 +67,7 @@ public class MarkerControler : MonoBehaviour
 
     private void MakeMarker()
     {
+        InitialPosition = currentMarker.transform.position;
         launchButtonController.HitPointNotNull = true;
         CanBePlaced = false;
     }
