@@ -7,7 +7,7 @@ public class LaunchButtonController : MonoBehaviour
 {
    
     [SerializeField] Button LaunchButton;
-    [SerializeField] bool HitPointNotNull;
+     public bool HitPointNotNull;
 
     // Update is called once per frame
     void Update()

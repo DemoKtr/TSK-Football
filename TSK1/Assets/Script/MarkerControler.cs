@@ -10,6 +10,7 @@ public class MarkerControler : MonoBehaviour
     public GameObject Sphere;
     bool CanBePlaced;
     RaycastHit hit;
+    [SerializeField] LaunchButtonController launchButtonController;
 
 
     private void Start()
@@ -23,7 +24,7 @@ public class MarkerControler : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         
-        if(CanBePlaced)
+        if (CanBePlaced)
         {
             if (Physics.Raycast(ray, out hit))
             {
@@ -37,6 +38,11 @@ public class MarkerControler : MonoBehaviour
                     currentMarker.SetActive(true); // W³¹czamy znacznik
                     currentMarker.transform.position = hit.point + hit.normal * markerDistance; // Ustawiamy pozycjê znacznika
                     currentMarker.transform.up = hit.normal;
+
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        MakeMarker();
+                    }
                 }
                 else
                 {
@@ -58,12 +64,9 @@ public class MarkerControler : MonoBehaviour
         
     }
 
-    private void OnMouseDown()
+    private void MakeMarker()
     {
-        currentMarker = Instantiate(marker);
-        currentMarker.SetActive(true); // W³¹czamy znacznik
-        currentMarker.transform.position = hit.point + hit.normal * markerDistance;
-        currentMarker.transform.up = hit.normal;
+        launchButtonController.HitPointNotNull = true;
         CanBePlaced = false;
     }
     
