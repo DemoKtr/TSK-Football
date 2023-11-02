@@ -31,6 +31,7 @@ public class Ball : MonoBehaviour
     private Vector3 coriolisForce = new Vector3(0.0f,0.0f,0.0f);
     private Vector3 ResultForce = new Vector3(0.0f,0.0f,0.0f);
     private Vector3 collisionForce= new Vector3(0.0f,0.0f,0.0f);
+    private Vector3 gravityForce= new Vector3(0.0f,0.0f,0.0f);
 
     
     
@@ -42,7 +43,7 @@ public class Ball : MonoBehaviour
             private const float stifftness = 36833f; // k N/m
         //wspolczynniki
             private const float kd = 0.00622f;
-            private const float km = 0.25f;
+            private const float km = 0.03f;
         //grawitacja
             private const float g = 9.81f;
     //boole 
@@ -91,7 +92,10 @@ public class Ball : MonoBehaviour
         force.z = forceDirection.z / forceDirection.magnitude;
         force = force * initialForce;
         linearVelocity = (force * forceTime) / mass;
+        Debug.Log(linearVelocity);
+        Debug.Log(force);
         //linearVelocity = (forceTime * initialForce)/mass;
+        /*
         distanceFromAxes = new Vector3(
             Mathf.Sqrt(force.z * force.z + force.y * force.y),
             Mathf.Sqrt(force.z * force.z + force.x * force.x),
@@ -99,6 +103,7 @@ public class Ball : MonoBehaviour
         angularVelocity.x = ((5 * force.x * distanceFromAxes.x) / ((radius * radius) * mass * 2));
         angularVelocity.x = ((5 * force.y * distanceFromAxes.y) / ((radius * radius) * mass * 2));
         angularVelocity.x = ((5 * force.z * distanceFromAxes.z) / ((radius * radius) * mass * 2));
+        */
     } 
 
     public void calculateColisionForce()
@@ -115,6 +120,7 @@ public class Ball : MonoBehaviour
     {
         while (true)
         {
+            /*
             if (isCollision)
             {
                 if (!isCalculatedCollision)
@@ -127,13 +133,19 @@ public class Ball : MonoBehaviour
             }
             else
             {
-                calculateResultForce();
                 
-            }
-            calculateAcceleration();
+                
+            }*/
             
-            calculateVelocities(waitTime);
+            resetFroces();
+            calculateResultForce();
+            calculateAcceleration();
             calculatePositions(waitTime);
+            calculateVelocities(waitTime);
+            
+            
+            
+            
             
             yield return new WaitForSeconds(waitTime);
         }
@@ -141,7 +153,7 @@ public class Ball : MonoBehaviour
 
     public void calculateAcceleration()
     {
-        calculateAngularAcceleration();
+        //calculateAngularAcceleration();
         calcualtelinearAcceleration();
     }
     public void calculateVelocities(float dt)
@@ -165,12 +177,31 @@ public class Ball : MonoBehaviour
         coriolisForce = 2 * mass * Vector3.Cross(EarthAngularVelocity , linearVelocity);
     }
 
+    public void calculateGravityForce()
+    {
+        gravityForce =gravityForce = new Vector3(0, -g, 0) * mass;
+    }
+    
     public void calculateResultForce()
     {
-        calculateMagnusForce();
-        calcualteCoriolisFoce();
-        calculateFrictionForce();
-        ResultForce = MagnusForce + coriolisForce + FrictionForce;
+        
+        //calculateFrictionForce();
+        if (this.transform.position.y<=0.0f)
+        {
+            //this.GetComponent<SphereCollider>().center.Set(this.GetComponent<SphereCollider>().center.x,0,this.GetComponent<SphereCollider>().center.z);
+            gravityForce = Vector3.zero;
+        }
+        else
+        {
+            calculateMagnusForce();
+            calcualteCoriolisFoce();
+            calculateGravityForce();
+            
+            
+        }
+        
+        ResultForce =  MagnusForce+ coriolisForce + gravityForce;
+       
     }
     public void calculateMagnusForce()
     {
@@ -178,10 +209,12 @@ public class Ball : MonoBehaviour
             km * linearVelocity.y * Mathf.Abs(linearVelocity.y) + km * linearVelocity.z * Mathf.Abs(linearVelocity.z) -
             kd * Mathf.Pow(linearVelocity.x, 2),
             -(kd * linearVelocity.y * Mathf.Abs(linearVelocity.y)) +
-            km * linearVelocity.z * Mathf.Abs(linearVelocity.z) - km * Mathf.Pow(linearVelocity.x, 2) + mass * g,
+            km * linearVelocity.z * Mathf.Abs(linearVelocity.z) - km * Mathf.Pow(linearVelocity.x, 2),
             -(km * Mathf.Pow(linearVelocity.x, 2)) + km * linearVelocity.y * Mathf.Abs(linearVelocity.y) +
             kd * Mathf.Pow(linearVelocity.z, 2)
         );
+        
+        
     }
     
     public void calculateFrictionForce()
@@ -193,9 +226,27 @@ public class Ball : MonoBehaviour
         
     }
 
+    public void resetFroces()
+    {
+        coriolisForce = Vector3.zero;
+        MagnusForce = Vector3.zero;
+        FrictionForce = Vector3.zero;
+        ResultForce= Vector3.zero;
+    }
     public void calculatePosition(float dt)
     {
-        this.transform.position = linearVelocity * dt + ((linearAcceleration * dt * dt) / 2);
+        Vector3 translations = linearVelocity * dt + linearAcceleration * ((dt*dt)/ 2);
+        
+        
+        
+        if (this.transform.position.y <= 0.0f && translations.y <= 0.0f) 
+        {
+            this.transform.position = new Vector3(translations.x,0,translations.z);
+        }
+        else
+        {
+            this.transform.position = translations;
+        }
 
     }
    /*
@@ -209,7 +260,7 @@ public class Ball : MonoBehaviour
     }*/
     public void calculateLinearVelocity(float dt)
     {
-        linearVelocity += linearAcceleration * dt;
+        linearVelocity = linearVelocity + linearAcceleration * dt;
     }
     public void calculateAngularVelocity(float dt)
     {
@@ -230,13 +281,15 @@ public class Ball : MonoBehaviour
     }
     public void Launch()
     {
-        mass = MassSlider.value;
+        mass = MassSlider.value * 0.001f;
+        gravityForce = new Vector3(0, -g, 0) * mass;
         initialForce = ForceSlider.value; //zaufaj ~Przemysław
         forcePosition = markercontroler.InitialPosition;
-        Debug.Log(forcePosition);
-        Debug.Log("kurwa");
+       
         calculate_Initial_Velocities();
-        StartCoroutine(MyCoroutine(0.01f));
+        
+        
+        StartCoroutine(MyCoroutine(0.001f));
     }
 
 }
