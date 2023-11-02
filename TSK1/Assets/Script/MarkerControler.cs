@@ -5,8 +5,8 @@ using UnityEngine;
 public class MarkerControler : MonoBehaviour
 {
     public GameObject marker; // Referencja do obiektu Plane (znacznika)
-    private GameObject currentMarker; // Referencja do obecnie wyœwietlanego znacznika
-    private float markerDistance = 0f; // Odleg³oœæ od kuli, na której ma byæ wyœwietlony znacznik
+    private GameObject currentMarker; // Referencja do obecnie wyï¿½wietlanego znacznika
+    private float markerDistance = 0f; // Odlegï¿½oï¿½ï¿½ od kuli, na ktï¿½rej ma byï¿½ wyï¿½wietlony znacznik
     public GameObject Sphere;
     bool CanBePlaced;
     RaycastHit hit;
@@ -17,7 +17,7 @@ public class MarkerControler : MonoBehaviour
     private void Start()
     {
         CanBePlaced = true;
-        marker.SetActive(false); // Na pocz¹tku znacznik jest wy³¹czony
+        marker.SetActive(false); // Na poczï¿½tku znacznik jest wyï¿½ï¿½czony
         marker.layer = LayerMask.NameToLayer("Ignore Raycast");
     }
 
@@ -36,9 +36,9 @@ public class MarkerControler : MonoBehaviour
                         currentMarker = Instantiate(marker); // Tworzymy nowy znacznik
                     }
 
-                    currentMarker.SetActive(true); // W³¹czamy znacznik
-                    currentMarker.transform.position = hit.point + hit.normal * markerDistance; // Ustawiamy pozycjê znacznika
+                    currentMarker.SetActive(true); // Wï¿½ï¿½czamy znacznik
                     currentMarker.transform.up = hit.normal;
+                    currentMarker.transform.position = hit.point + hit.normal * markerDistance; // Ustawiamy pozycjï¿½ znacznika
 
                     if (Input.GetMouseButtonDown(0))
                     {
@@ -49,7 +49,7 @@ public class MarkerControler : MonoBehaviour
                 {
                     if (currentMarker != null)
                     {
-                        currentMarker.SetActive(false); // Jeœli nie trafiliœmy w kulê, wy³¹czamy znacznik
+                        currentMarker.SetActive(false); // Jeï¿½li nie trafiliï¿½my w kulï¿½, wyï¿½ï¿½czamy znacznik
                     }
                 }
             }
@@ -57,7 +57,7 @@ public class MarkerControler : MonoBehaviour
             {
                 if (currentMarker != null)
                 {
-                    currentMarker.SetActive(false); // Jeœli nie trafiliœmy na ¿aden obiekt, wy³¹czamy znacznik
+                    currentMarker.SetActive(false); // Jeï¿½li nie trafiliï¿½my na ï¿½aden obiekt, wyï¿½ï¿½czamy znacznik
                 }
             }
 
