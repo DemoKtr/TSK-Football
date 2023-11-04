@@ -242,7 +242,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 249289361}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -305,7 +305,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 249289361}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.72, z: 62.1}
+  m_LocalPosition: {x: 0, y: -1.297, z: 62.1}
   m_LocalScale: {x: 1294.0139, y: 1.57, z: 869.77844}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -921,16 +921,21 @@ MonoBehaviour:
   ForceSlider: {fileID: 801790752}
   MassSlider: {fileID: 162932271}
   mass: 0.4
-  friction: 1
+  friction: 0.35
   radius: 0.5
   initialForce: 0
+  linearVelocity: {x: 0, y: 0, z: 0}
+  angularVelocity: {x: 0, y: 0, z: 0}
+  linearAcceleration: {x: 0, y: 0, z: 0}
   forcePosition: {x: 0, y: 0, z: 0}
   markercontroler: {fileID: 963194229}
+  ResultForce: {x: 0, y: 0, z: 0}
   onAir: 0
   isKicked: 0
   isCalculatedCollision: 0
   isGoal: 0
   isCollision: 0
+  isOnground: 0
 --- !u!135 &934331580
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -939,7 +944,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 934331578}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -2003,7 +2008,7 @@ GameObject:
   - component: {fileID: 1948038510}
   - component: {fileID: 1948038509}
   - component: {fileID: 1948038508}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pitch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2018,7 +2023,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1948038507}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -2081,7 +2086,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1948038507}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -1.68, z: 0}
+  m_LocalPosition: {x: 0, y: -1.257, z: 0}
   m_LocalScale: {x: 105, y: 1.57, z: 68}
   m_ConstrainProportionsScale: 0
   m_Children: []
