@@ -137,15 +137,13 @@ public class Ball : MonoBehaviour
         
         
         distanceFromAxes = new Vector3(
-            Mathf.Sqrt(force.z * force.z + force.y * force.y),
-            Mathf.Sqrt(force.z * force.z + force.x * force.x),
-            Mathf.Sqrt(force.x * force.x + force.y * force.y));
-        force.x = forceDirection.x / forceDirection.magnitude;
-        force.y = forceDirection.y / forceDirection.magnitude;
-        force.z = forceDirection.z / forceDirection.magnitude;
-        force = force * initialForce;
+            Mathf.Sqrt(forcePosition.z * forcePosition.z + forcePosition.y * forcePosition.y),
+            Mathf.Sqrt(forcePosition.z * forcePosition.z + forcePosition.x * forcePosition.x),
+            Mathf.Sqrt(forcePosition.x * forcePosition.x + forcePosition.y * forcePosition.y));
+        forceDirection = new Vector3(0, 0, 1);
+        forceDirection= forceDirection * initialForce;
 
-        angularVelocity += Vector3.Cross(forcePosition, force)* forceTime * 5 / (2 * mass * radius * radius); 
+        angularVelocity += Vector3.Cross(forcePosition, forceDirection)* forceTime * 5 / (2 * mass * radius * radius); 
         
        
     } 
@@ -273,7 +271,7 @@ public class Ball : MonoBehaviour
         }
         else if (tester <= 0.2f)
         {
-            cd = -1f;
+            cd = -0.1f;
         }
         else if (tester <= 0.3f)
         {
@@ -286,11 +284,11 @@ public class Ball : MonoBehaviour
         float tester = linearVelocity.magnitude;
         if (tester <= 5.0f)
         {
-            cd = 0.3f;
+            cd = 0.2f;
         }
         else if (tester <= 10.0f)
         {
-            cd = 0.25f;
+            cd = 0.2f;
         }
         else
         {
