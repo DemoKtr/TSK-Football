@@ -38,6 +38,8 @@ public class Ball : MonoBehaviour
     private float interwalsymulacji;
     private DateTime deltatime=new DateTime();
     public float cd = 0.2f;
+    public float cm = 0.2f;
+    public float S = 0.2f;
     
     //stale
     private const float forceTime = 0.01f;
@@ -203,7 +205,7 @@ public class Ball : MonoBehaviour
     }
     public void calcualteCoriolisFoce()
     {
-        coriolisForce = 2 * mass * Vector3.Cross(EarthAngularVelocity , linearVelocity);
+        coriolisForce = Vector3.zero; //2 * mass * Vector3.Cross(EarthAngularVelocity , linearVelocity);
     }
 
     public void calculateGravityForce()
@@ -245,11 +247,12 @@ public class Ball : MonoBehaviour
     }
     public void calculateMagnusForce()
     {
+        calcualtecm();
         Vector3 forceDirection = (linearVelocity);
         
         Vector3 w = new Vector3(-forceDirection.y, forceDirection.x, 0);
         w = w.normalized;
-        float magnusForceMagnitude = (0.2f*0.1f*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
+        float magnusForceMagnitude = (cm*0.1f*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
         MagnusForce = w * magnusForceMagnitude;
     }
     public void calculateResistanceForce()
@@ -261,14 +264,31 @@ public class Ball : MonoBehaviour
         OporForce =forceDirection* value;
     }
 
+    public void calcualtecm()
+    {
+        float tester = angularVelocity.magnitude*radius/linearVelocity.magnitude;
+        if (tester <= 0.1f)
+        {
+            cm = 0.1f;
+        }
+        else if (tester <= 0.2f)
+        {
+            cd = -1f;
+        }
+        else if (tester <= 0.3f)
+        {
+            cd = 0.15f;
+        }
+        
+    }
     public void calcualtecd()
     {
         float tester = linearVelocity.magnitude;
-        if (tester <= 10)
+        if (tester <= 5.0f)
         {
             cd = 0.3f;
         }
-        else if (tester <= 12.5)
+        else if (tester <= 10.0f)
         {
             cd = 0.25f;
         }
