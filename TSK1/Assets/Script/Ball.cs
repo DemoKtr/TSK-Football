@@ -266,11 +266,11 @@ public class Ball : MonoBehaviour
         float tester = linearVelocity.magnitude;
         if (tester <= 10)
         {
-            cd = 0.45f;
+            cd = 0.21f;
         }
         else if (tester <= 12.5)
         {
-            cd = 0.31f;
+            cd = 0.21f;
         }
         else
         {
