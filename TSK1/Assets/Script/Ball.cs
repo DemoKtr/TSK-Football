@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -100,12 +101,11 @@ public class Ball : MonoBehaviour
            }*/
             //resetFroces();
 
+           
+            calculateResultForce();
+            calculateAcceleration();
             calculatePositions(ti);
             calculateVelocities(ti);
-            calculateResultForce();
-               
-            calculateAcceleration();
-           
            
             
             
@@ -145,10 +145,8 @@ public class Ball : MonoBehaviour
         force.z = forceDirection.z / forceDirection.magnitude;
         force = force * initialForce;
 
-        angularVelocity = Vector3.Cross(forcePosition, force) * 5 / (2 * mass * radius * radius); 
-        //angularVelocity.x = ((5 * force.x* forceTime * distanceFromAxes.x) / ((radius * radius) * mass * 2));
-        //angularVelocity.y = ((5 * force.y* forceTime * distanceFromAxes.y) / ((radius * radius) * mass * 2));
-        //angularVelocity.z = ((5 * force.z* forceTime * distanceFromAxes.z) / ((radius * radius) * mass * 2));
+        angularVelocity += Vector3.Cross(forcePosition, force)* forceTime * 5 / (2 * mass * radius * radius); 
+        
        
     } 
 
@@ -160,8 +158,18 @@ public class Ball : MonoBehaviour
         collisionForce.x = damping * linearVelocity.x + stifftness * deviation.x + kd * linearVelocity.x * linearVelocity.x;
         collisionForce.y = damping * linearVelocity.y + stifftness * deviation.y + kd * linearVelocity.x * Mathf.Abs(linearVelocity.x);
         collisionForce.z = damping * linearVelocity.z + stifftness * deviation.z + kd * linearVelocity.z * linearVelocity.z;
-        Vector3 linearVelocityhelper = (collisionForce * forceTime) / mass;
-        Debug.Log(linearVelocityhelper);
+        Vector3 l1 = linearVelocity;
+        l1.y *= -1;
+        l1.x = l1.x / l1.magnitude;
+        l1.y = l1.y / l1.magnitude;
+        l1.z = l1.z / l1.magnitude;
+        collisionForce.x *= l1.x;
+        collisionForce.y *= l1.y;
+        collisionForce.z *= l1.z;
+
+        linearVelocity= (collisionForce * forceTime) / mass;
+        
+        
         //linearVelocity += linearVelocityhelper;
 
 
@@ -236,22 +244,20 @@ public class Ball : MonoBehaviour
     }
     public void calculateMagnusForce()
     {
-        MagnusForce.x = (0.2f*1.2f*linearVelocity.x*linearVelocity.x*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
-        MagnusForce.y = (0.2f*1.2f*linearVelocity.y*linearVelocity.y*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
-        MagnusForce.z = (0.2f*1.2f*linearVelocity.z*linearVelocity.z*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
-
+        Vector3 forceDirection = (linearVelocity);
+        
+        Vector3 w = new Vector3(forceDirection.y, -forceDirection.x, 0);
+        w = w.normalized;
+        float magnusForceMagnitude = (0.1f*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
+        MagnusForce = w * magnusForceMagnitude;
     }
     public void calculateResistanceForce()
     {
-      
-        float value = (0.202f*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
-        Vector3 forceDirection = -linearVelocity;
-        
-        
-        OporForce.x = forceDirection.x / forceDirection.magnitude;
-        OporForce.y = forceDirection.y / forceDirection.magnitude;
-        OporForce.z = forceDirection.z / forceDirection.magnitude;
-        OporForce = OporForce * value;
+      calcualtecd();
+        float value = (cd*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
+        Vector3 forceDirection = -linearVelocity.normalized;
+
+        OporForce =forceDirection* value;
     }
 
     public void calcualtecd()
@@ -259,11 +265,11 @@ public class Ball : MonoBehaviour
         float tester = linearVelocity.magnitude;
         if (tester <= 10)
         {
-            cd = 0.46f;
+            cd = 0.45f;
         }
         else if (tester <= 12.5)
         {
-            cd = 0.48f;
+            cd = 0.31f;
         }
         else
         {
@@ -307,7 +313,7 @@ public class Ball : MonoBehaviour
             else
             {
                 this.transform.position = new Vector3(this.transform.position.x+translations.x, 0, this.transform.position.z+translations.z);
-                calculateColisionForce();
+                //calculateColisionForce();
                 isCollision = true; 
             }
             
@@ -332,28 +338,10 @@ public class Ball : MonoBehaviour
     }*/
     public void calculateLinearVelocity(float dt)
     {
-       Vector3 linearVelocityh  = linearVelocity + linearAcceleration * dt;
-       if (((linearVelocityh.x <= 0) && (linearVelocity.x > 0)) ||
-           ((linearVelocityh.x >= 0) && (linearVelocity.x < 0)))
-       {
-           linearVelocity.x = 0;
-       }
-       else
-       {
-           linearVelocity.x = linearVelocityh.x;
-       }
+        linearVelocity = linearVelocity + linearAcceleration * dt;
+      
        
-       if (((linearVelocityh.z <= 0) && (linearVelocity.z > 0)) ||
-           ((linearVelocityh.z >= 0) && (linearVelocity.z < 0)))
-       {
-           linearVelocity.z = 0;
-       }
-       else
-       {
-           linearVelocity.z = linearVelocityh.z;
-       }
        
-           linearVelocity.y = linearVelocityh.y;
        
     }
     public void calculateAngularVelocity(float dt)
@@ -362,16 +350,18 @@ public class Ball : MonoBehaviour
     }
     public void calculateAngularAcceleration()
     {
-        if (FrictionForce != Vector3.zero)
+        if (isOnground)
         {
             
            // angularAcceleration = (Vector3.Cross(FrictionForce, helperRadiusVector))/((5/2)*mass*radius*radius);
             // M/I I =2/5 mr^2
+            Vector3 helperRadiusVector = this.GetComponent<SphereCollider>().center - new Vector3(0, -radius, 0);
+            angularAcceleration = Vector3.Cross(FrictionForce ,helperRadiusVector)*(5/2)/mass/radius/radius;;
         }
         else
         {
             Vector3 helperRadiusVector = this.GetComponent<SphereCollider>().center - new Vector3(0, -radius, 0);
-            angularAcceleration = Vector3.Cross(ResultForce ,helperRadiusVector);
+            angularAcceleration = Vector3.Cross(OporForce ,helperRadiusVector)*(5/2)/mass/radius/radius;
         }
     }
     public void Launch()
