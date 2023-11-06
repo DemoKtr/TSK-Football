@@ -37,7 +37,7 @@ public class Ball : MonoBehaviour
     private Vector3 gravityForce= new Vector3(0.0f,0.0f,0.0f);
     private float interwalsymulacji;
     private DateTime deltatime=new DateTime();
-    public float cd = 0.49f;
+    public float cd = 0.2f;
     
     //stale
     private const float forceTime = 0.01f;
@@ -75,11 +75,9 @@ public class Ball : MonoBehaviour
     {
         if (isKicked == true)
         {
-            
-        
-            ti += Time.deltaTime; // Zwiększ timer o czas trwania jednej klatki
 
-        if (ti >= simulationInterval)
+            ti += Time.deltaTime; // Zwiększ timer o czas trwania jednej klatki
+            if (ti >= simulationInterval)
         {
            
             
@@ -225,6 +223,7 @@ public class Ball : MonoBehaviour
             MagnusForce = Vector3.zero;
             OporForce = Vector3.zero;
             calculateFrictionForce();
+           
         }
         else
         {
@@ -237,24 +236,26 @@ public class Ball : MonoBehaviour
 
         }
         
-        ResultForce =  MagnusForce+ coriolisForce + gravityForce + OporForce + FrictionForce;
-       Debug.Log(MagnusForce.magnitude);
-       
-       
+        ResultForce =   MagnusForce+coriolisForce + gravityForce + OporForce + FrictionForce;
+        Debug.Log("magnusFoce "+ MagnusForce);
+        Debug.Log("velocity " + linearVelocity);
+
+
+
     }
     public void calculateMagnusForce()
     {
         Vector3 forceDirection = (linearVelocity);
         
-        Vector3 w = new Vector3(forceDirection.y, -forceDirection.x, 0);
+        Vector3 w = new Vector3(-forceDirection.y, forceDirection.x, 0);
         w = w.normalized;
-        float magnusForceMagnitude = (0.1f*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
+        float magnusForceMagnitude = (0.2f*0.1f*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
         MagnusForce = w * magnusForceMagnitude;
     }
     public void calculateResistanceForce()
     {
       calcualtecd();
-        float value = (cd*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
+        float value = (cd*0.1f*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*(3.14f*(2.0f*radius)*(2.0f*radius)/4.0f))/2.0f;
         Vector3 forceDirection = -linearVelocity.normalized;
 
         OporForce =forceDirection* value;
