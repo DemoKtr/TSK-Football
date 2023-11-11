@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -305,7 +305,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 249289361}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.009999998, y: -1.297, z: 125.799995}
+  m_LocalPosition: {x: -0.009999998, y: -1.2400001, z: 125.799995}
   m_LocalScale: {x: 1294.0139, y: 1.57, z: 869.77844}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -319,6 +319,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2403500774990902683, guid: fd3d4982489e8a641be24403f5cb5ab4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.68
+      objectReference: {fileID: 0}
     - target: {fileID: 2477287273281363577, guid: fd3d4982489e8a641be24403f5cb5ab4, type: 3}
       propertyPath: m_Name
       value: Gate (1)
@@ -922,7 +926,7 @@ MonoBehaviour:
   MassSlider: {fileID: 162932271}
   mass: 0.4
   friction: 0.2
-  radius: 0.5
+  radius: 0.3
   initialForce: 0
   linearVelocity: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
@@ -939,6 +943,7 @@ MonoBehaviour:
   isGoal: 0
   isCollision: 0
   isOnground: 0
+  A: 0
 --- !u!135 &934331580
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1011,7 +1016,7 @@ Transform:
   m_GameObject: {fileID: 934331578}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2089,8 +2094,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1948038507}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.009999998, y: -1.257, z: 63.700005}
-  m_LocalScale: {x: 150, y: 1.57, z: 97}
+  m_LocalPosition: {x: -0.009999998, y: -1.2, z: 39.3}
+  m_LocalScale: {x: 105, y: 1.57, z: 68}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2213,7 +2218,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2966402153565406403, guid: fd3d4982489e8a641be24403f5cb5ab4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 71.3
+      value: 24.7
       objectReference: {fileID: 0}
     - target: {fileID: 2966402153565406403, guid: fd3d4982489e8a641be24403f5cb5ab4, type: 3}
       propertyPath: m_LocalRotation.w

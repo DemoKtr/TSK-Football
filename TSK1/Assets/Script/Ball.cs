@@ -44,7 +44,7 @@ public class Ball : MonoBehaviour
     public float S = 0.2f;
     
     //stale
-    private const float forceTime = 0.01f;
+    private const float forceTime = 0.012f;
 
     private float timer = 0.01f;
         //zderzenie
@@ -108,9 +108,11 @@ public class Ball : MonoBehaviour
             calculateAcceleration();
             calculatePositions(ti);
             calculateVelocities(ti);
-           
-            
-            
+          // Debug.Log(Dragmomentum);
+
+            //Debug.Log(angularAcceleration);
+
+
             resetFroces();
 
 
@@ -128,31 +130,32 @@ public class Ball : MonoBehaviour
     {
         
         Vector3 forceDirection = -forcePosition;
-        
-        
+
         force.x = forceDirection.x / forceDirection.magnitude;
         force.y = forceDirection.y / forceDirection.magnitude;
         force.z = forceDirection.z / forceDirection.magnitude;
         force = force * initialForce;
         linearVelocity = (force * forceTime) / mass;
-       
-        
-       /*
-        distanceFromAxes = new Vector3(
-            Mathf.Sqrt(forcePosition.z * forcePosition.z + forcePosition.y * forcePosition.y),
-            Mathf.Sqrt(forcePosition.z * forcePosition.z + forcePosition.x * forcePosition.x),
-            Mathf.Sqrt(forcePosition.x * forcePosition.x + forcePosition.y * forcePosition.y));
-        forceDirection = new Vector3(0, 0, 1);
-        forceDirection= forceDirection * initialForce;
 
-        angularVelocity = Vector3.Cross( forcePosition,forceDirection).normalized * forceTime * 5 / (2 * mass * radius * radius); 
-       */
-       angularVelocity = Vector3.Cross(forcePosition,linearVelocity);
-       //angularVelocity = angularVelocity.normalized;
-       float value = initialForce*radius *forceTime * 5.0f / (2.0f * mass * radius * radius); 
-       Debug.Log("Vector3" + angularVelocity);
+
+        /*
+         distanceFromAxes = new Vector3(
+             Mathf.Sqrt(forcePosition.z * forcePosition.z + forcePosition.y * forcePosition.y),
+             Mathf.Sqrt(forcePosition.z * forcePosition.z + forcePosition.x * forcePosition.x),
+             Mathf.Sqrt(forcePosition.x * forcePosition.x + forcePosition.y * forcePosition.y));
+         forceDirection = new Vector3(0, 0, 1);
+         forceDirection= forceDirection * initialForce;
+
+         angularVelocity = Vector3.Cross( forcePosition,forceDirection).normalized * forceTime * 5 / (2 * mass * radius * radius); 
+        */
+        Vector3 linearDirection = new Vector3(0, 0, 1);
+
+
+        angularVelocity = Vector3.Cross(linearVelocity, linearDirection);
+        //angularVelocity = angularVelocity.normalized;
+        float value = initialForce*radius *forceTime * 5.0f / (2.0f * mass * radius * radius); 
        //
-       Debug.Log("Value" + value);
+      // Debug.Log("Value" + value);
 
 
     } 
@@ -208,7 +211,7 @@ public class Ball : MonoBehaviour
     public void calculateRotation(float dt)
     {
         Vector3 Rotation = angularVelocity * dt + angularAcceleration*dt*dt/2;
-        GetComponent<Transform>().Rotate(Rotation);
+        GetComponent<Transform>().Rotate(-Rotation);
     }
     public void calcualtelinearAcceleration()
     {
@@ -226,8 +229,12 @@ public class Ball : MonoBehaviour
 
     public void calculateMomentumDrag()
     {
-        Dragmomentum = angularVelocity.normalized;
-        Dragmomentum = -(Dragmomentum * ((float)linearVelocity.magnitude) * ((float)linearVelocity.magnitude)*1.2f * A * 0.5f *0.05f);
+        //Dragmomentum = angularVelocity.normalized;
+        Dragmomentum = (angularVelocity.normalized * ((float)linearVelocity.magnitude) * ((float)linearVelocity.magnitude)*1.2f * A * 0.5f *0.05f);
+
+       //Dragmomentum *= -1;
+        //Debug.Log(angularAcceleration);
+        //Debug.Log(Dragmomentum);
 
     }
     
@@ -248,12 +255,14 @@ public class Ball : MonoBehaviour
         }
         else
         {
+
             calculateMagnusForce();
             calcualteCoriolisFoce();
             calculateGravityForce();
             calculateResistanceForce();
             calculateArchimedesForce();
             FrictionForce = Vector3.zero;
+            calculateMomentumDrag();
 
 
         }
@@ -277,6 +286,7 @@ public class Ball : MonoBehaviour
         forceDirection=forceDirection.normalized;
         float magnusForceMagnitude = (cm*0.1f*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*A)/2.0f;
         MagnusForce = forceDirection * magnusForceMagnitude;
+        
     }
     public void calculateResistanceForce()
     {
@@ -395,13 +405,15 @@ public class Ball : MonoBehaviour
            // angularAcceleration = (Vector3.Cross(FrictionForce, helperRadiusVector))/((5/2)*mass*radius*radius);
             // M/I I =2/5 mr^2
             Vector3 helperRadiusVector = this.GetComponent<SphereCollider>().center - new Vector3(0, -radius, 0);
-            angularAcceleration = Vector3.Cross(FrictionForce ,helperRadiusVector)*(5/2)/mass/radius/radius;;
+            angularAcceleration = Vector3.Cross(FrictionForce ,helperRadiusVector)*(5/2)/mass/radius/radius;
         }
         else
         {
-            calculateMomentumDrag();
+           // calculateMomentumDrag();
             Vector3 helperRadiusVector = this.GetComponent<SphereCollider>().center - new Vector3(0, -radius, 0);
             angularAcceleration = Dragmomentum*(5/2)/mass/radius/radius;
+            Debug.Log(angularAcceleration);
+
             
         }
     }
@@ -411,6 +423,7 @@ public class Ball : MonoBehaviour
         gravityForce = new Vector3(0, -g, 0) * mass;
         initialForce = ForceSlider.value; //zaufaj ~Przemysław
         forcePosition = markercontroler.InitialPosition;
+
         calculate_Initial_Velocities();
         A = (3.14f * (2.0f * radius) * (2.0f * radius) / 4.0f);
         isKicked = true;
