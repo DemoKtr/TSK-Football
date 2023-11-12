@@ -71,6 +71,14 @@ public class MarkerControler : MonoBehaviour
         launchButtonController.HitPointNotNull = true;
         CanBePlaced = false;
     }
-    
+
+    public void ResetValues()
+    {
+        CanBePlaced = true;
+        marker.SetActive(false);
+        marker.layer = LayerMask.NameToLayer("Ignore Raycast");
+        launchButtonController.HitPointNotNull = false;
+        CanBePlaced = true;
+    }
 
 }

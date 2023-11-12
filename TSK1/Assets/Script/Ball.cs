@@ -10,6 +10,7 @@ public class Ball : MonoBehaviour
 {
     [SerializeField] Slider ForceSlider;        //zaufaj, tak trzeba bo unity nas nie lubi ~ Przemysław
     [SerializeField] Slider MassSlider;
+    [SerializeField] LaunchButtonController launchButtonController;
 
     [SerializeField] private float mass;
     [SerializeField] private float friction;
@@ -68,9 +69,25 @@ public class Ball : MonoBehaviour
             // Start is called before the first frame update
     void Start()
     {
-        
-        
-        
+        distanceFromAxes = Vector3.zero;
+        linearVelocity = Vector3.zero;
+        angularVelocity = Vector3.zero;
+        linearAcceleration = Vector3.zero;
+        angularAcceleration = Vector3.zero;
+        forcePosition = Vector3.zero;
+        force = Vector3.zero;
+        FrictionForce = Vector3.zero;
+        MagnusForce = Vector3.zero;
+        coriolisForce = Vector3.zero;
+        ResultForce = Vector3.zero;
+        OporForce = Vector3.zero;
+        collisionForce = Vector3.zero;
+        gravityForce = Vector3.zero;
+        Dragmomentum = Vector3.zero;
+        ArchimedesForce = Vector3.zero;
+        isKicked = false;
+        isCollision = false;
+        isOnground = false;
     }
 
    private float simulationInterval = 0.01f; // Ustaw interwał symulacji na 0.1 sekundy
@@ -424,7 +441,34 @@ public class Ball : MonoBehaviour
         calculate_Initial_Velocities();
         A = (3.14f * (2.0f * radius) * (2.0f * radius) / 4.0f);
         isKicked = true;
+        launchButtonController.Hited = true;
 
+    }
+
+    public void ResetValues()
+    {
+        this.transform.position = Vector3.zero;
+        this.transform.rotation = Quaternion.identity;
+        distanceFromAxes = Vector3.zero;
+        linearVelocity = Vector3.zero;
+        angularVelocity = Vector3.zero;
+        linearAcceleration = Vector3.zero;
+        angularAcceleration = Vector3.zero;
+        forcePosition = Vector3.zero;
+        force = Vector3.zero;
+        FrictionForce = Vector3.zero;
+        MagnusForce = Vector3.zero;
+        coriolisForce = Vector3.zero;
+        ResultForce = Vector3.zero;
+        OporForce = Vector3.zero;
+        collisionForce = Vector3.zero;
+        gravityForce = Vector3.zero;
+        Dragmomentum = Vector3.zero;
+        ArchimedesForce = Vector3.zero;
+        isKicked = false;
+        isCollision = false;
+        isOnground = false;
+        launchButtonController.Hited = false;
 
     }
 

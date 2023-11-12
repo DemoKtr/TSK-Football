@@ -7,7 +7,14 @@ public class LaunchButtonController : MonoBehaviour
 {
    
     [SerializeField] Button LaunchButton;
+    [SerializeField] Button ResetButton;
      public bool HitPointNotNull;
+    public bool Hited;
+
+    private void Start()
+    {
+        ResetButton.interactable = true;
+    }
 
     // Update is called once per frame
     void Update()
@@ -15,6 +22,10 @@ public class LaunchButtonController : MonoBehaviour
         if (HitPointNotNull)
         {
             LaunchButton.interactable = true;
+        }
+        if(Hited)
+        {
+            LaunchButton.interactable = false;
         }
     }
 }
