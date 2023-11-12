@@ -84,34 +84,30 @@ public class Ball : MonoBehaviour
             if (ti >= simulationInterval)
             {
            
-            
-              /*
-           if (isCollision)
-           {
-               if (!isCalculatedCollision)
-               {
-                   calculateColisionForce();
-                   ResultForce = collisionForce;
-                   isCalculatedCollision = true;
-               }
-               isCollision = false;
-           }
-           else
-           {
+                
+                if (isCollision)
+                {
                
+                        calculateColisionForce();
+                        ResultForce = collisionForce;
+                        //calculateAcceleration();
+                        calculatePositions(ti);
+                        calculateVelocities(ti);
+                        isCollision = false;
+                }
+                else
+                {
                
-           }*/
-            //resetFroces();
+                    calculateResultForce();
+                    calculateAcceleration();
+                    calculatePositions(ti);
+                    calculateVelocities(ti);
+
+                }
+                //resetFroces();
 
            
-            calculateResultForce();
-            calculateAcceleration();
-            calculatePositions(ti);
-            calculateVelocities(ti);
-          // Debug.Log(Dragmomentum);
-
-            //Debug.Log(angularAcceleration);
-
+            
 
             resetFroces();
 
@@ -342,6 +338,7 @@ public class Ball : MonoBehaviour
 
     public void resetFroces()
     {
+        collisionForce = Vector3.zero;
         coriolisForce = Vector3.zero;
         MagnusForce = Vector3.zero;
         FrictionForce = Vector3.zero;
