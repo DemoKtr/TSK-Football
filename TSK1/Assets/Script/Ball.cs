@@ -89,7 +89,7 @@ public class Ball : MonoBehaviour
                 {
                
                         calculateColisionForce();
-                        ResultForce = collisionForce;
+                        
                         //calculateAcceleration();
                         calculatePositions(ti);
                         calculateVelocities(ti);
