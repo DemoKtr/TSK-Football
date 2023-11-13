@@ -90,16 +90,14 @@ public class Ball : MonoBehaviour
         isOnground = false;
     }
 
-   private float simulationInterval = 0.001f; // Ustaw interwał symulacji na 0.1 sekundy
+   private float simulationInterval = 0.02f; // Ustaw interwał symulacji na 0.1 sekundy
    private float ti = 0.0f;
 
-    void Update()
+    void FixedUpdate()
     {
         if (isKicked == true)
         {
-            ti += Time.deltaTime; // Zwiększ timer o czas trwania jednej klatki
-            if (ti >= simulationInterval)
-            {
+           
            
                 
                 if (isCollision)
@@ -107,8 +105,8 @@ public class Ball : MonoBehaviour
 
                         calculateColisionForce();
                         calculateAcceleration();
-                        calculatePositions(ti);
-                        calculateVelocities(ti);
+                        calculatePositions(simulationInterval);
+                        calculateVelocities(simulationInterval);
                         
                         isCollision = false;
                 }
@@ -117,21 +115,13 @@ public class Ball : MonoBehaviour
                
                     calculateResultForce();
                     calculateAcceleration();
-                    calculatePositions(ti);
-                    calculateVelocities(ti);
+                    calculatePositions(simulationInterval);
+                    calculateVelocities(simulationInterval);
 
                 }
-                //resetFroces();
-
-           
+                resetFroces();
+                
             
-
-            resetFroces();
-
-
-            
-            ti = 0.0f; 
-            }
         }
     }
 
@@ -189,7 +179,7 @@ public class Ball : MonoBehaviour
         collisionForce.y *= l1.y;
         collisionForce.z *= l1.z;
         */
-        linearVelocity.y = -linearVelocity.y * 0.7f;
+        linearVelocity.y = -linearVelocity.y * 0.71f;
 
         //linearVelocity= (collisionForce * forceTime) / mass;
 
@@ -261,9 +251,11 @@ public class Ball : MonoBehaviour
             gravityForce = Vector3.zero;
             coriolisForce = Vector3.zero;
             MagnusForce = Vector3.zero;
-            OporForce = Vector3.zero;
+            
             ArchimedesForce = Vector3.zero;
             calculateFrictionForce();
+            calculateResistanceForce();
+            
            
         }
         else
@@ -276,7 +268,7 @@ public class Ball : MonoBehaviour
             calculateArchimedesForce();
             FrictionForce = Vector3.zero;
             calculateMomentumDrag();
-
+            
 
         }
         
@@ -299,7 +291,8 @@ public class Ball : MonoBehaviour
         forceDirection=forceDirection.normalized;
         float magnusForceMagnitude = (cm*0.1f*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*A)/2.0f;
         MagnusForce = forceDirection * magnusForceMagnitude;
-        
+        MagnusForce.y = 0;
+
     }
     public void calculateResistanceForce()
     {
@@ -349,8 +342,11 @@ public class Ball : MonoBehaviour
         //kierunek tej siły
         float FrictionForceMagnitude = mass * g * friction;
         FrictionForce = -linearVelocity.normalized;
-        FrictionForce.y = 0;
+        if (Mathf.Abs(linearVelocity.x) < 0.1f) linearVelocity.x = 0;
+        if (Mathf.Abs(linearVelocity.z) < 0.1f) linearVelocity.z = 0;
+            FrictionForce.y = 0;
         FrictionForce = FrictionForce * FrictionForceMagnitude;
+        
         Debug.Log(FrictionForce);
     }
 
