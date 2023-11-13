@@ -24,7 +24,7 @@ public class Ball : MonoBehaviour
     public Vector3 angularVelocity = new Vector3(0.0f,0.0f,0.0f);
     public Vector3 linearAcceleration = new Vector3(0.0f,0.0f,0.0f);
     private Vector3 angularAcceleration = new Vector3(0.0f,0.0f,0.0f);
-    private Vector3 deviation = new Vector3(0.005f,0.05f,0.05f);
+    private Vector3 deviation = new Vector3(0f,0f,0f);
     [SerializeField] private Vector3 forcePosition = new Vector3(0.0f,0.0f,0.0f); // tak naprawde raduius vectorowo
     [SerializeField] private MarkerControler markercontroler;  // tak naprawde raduius vectorowo
     private Vector3 force = new Vector3(0.0f,0.0f,0.0f); // odwrotnosc wektora pozycji
@@ -73,7 +73,7 @@ public class Ball : MonoBehaviour
         
     }
 
-   private float simulationInterval = 0.01f; // Ustaw interwał symulacji na 0.1 sekundy
+   private float simulationInterval = 0.001f; // Ustaw interwał symulacji na 0.1 sekundy
    private float ti = 0.0f;
 
     void Update()
@@ -87,12 +87,12 @@ public class Ball : MonoBehaviour
                 
                 if (isCollision)
                 {
-               
+
                         calculateColisionForce();
-                        
-                        //calculateAcceleration();
+                        calculateAcceleration();
                         calculatePositions(ti);
                         calculateVelocities(ti);
+                        
                         isCollision = false;
                 }
                 else
@@ -150,8 +150,7 @@ public class Ball : MonoBehaviour
         angularVelocity = Vector3.Cross(linearVelocity, linearDirection);
         //angularVelocity = angularVelocity.normalized;
         float value = initialForce*radius *forceTime * 5.0f / (2.0f * mass * radius * radius); 
-       //
-      // Debug.Log("Value" + value);
+      
 
 
     } 
@@ -159,11 +158,11 @@ public class Ball : MonoBehaviour
     public void calculateColisionForce()
     {
         //x y z to wektor odkształcenia
-        
-        
-        collisionForce.x = damping * linearVelocity.x + stifftness * deviation.x + kd * linearVelocity.x * linearVelocity.x;
-        collisionForce.y = damping * linearVelocity.y + stifftness * deviation.y + kd * linearVelocity.x * Mathf.Abs(linearVelocity.x);
-        collisionForce.z = damping * linearVelocity.z + stifftness * deviation.z + kd * linearVelocity.z * linearVelocity.z;
+        /*
+        calcualtecd();
+        collisionForce.x = 0;//damping * linearVelocity.x + stifftness * deviation.x + kd * linearVelocity.x * linearVelocity.x;
+        collisionForce.y = damping * linearVelocity.y + stifftness * deviation.y - cd * linearVelocity.y * Mathf.Abs(linearVelocity.y) - mass*g;
+        collisionForce.z = 0;//damping * linearVelocity.z + stifftness * deviation.z + kd * linearVelocity.z * linearVelocity.z;
         Vector3 l1 = linearVelocity;
         l1.y *= -1;
         l1.x = l1.x / l1.magnitude;
@@ -172,10 +171,12 @@ public class Ball : MonoBehaviour
         collisionForce.x *= l1.x;
         collisionForce.y *= l1.y;
         collisionForce.z *= l1.z;
+        */
+        linearVelocity.y = -linearVelocity.y * 0.7f;
 
-        linearVelocity= (collisionForce * forceTime) / mass;
-        
-        
+        //linearVelocity= (collisionForce * forceTime) / mass;
+
+
         //linearVelocity += linearVelocityhelper;
 
 
@@ -229,8 +230,7 @@ public class Ball : MonoBehaviour
         Dragmomentum = (angularVelocity.normalized * ((float)linearVelocity.magnitude) * ((float)linearVelocity.magnitude)*1.2f * A * 0.5f *0.05f);
 
        //Dragmomentum *= -1;
-        //Debug.Log(angularAcceleration);
-        //Debug.Log(Dragmomentum);
+        
 
     }
     
@@ -331,9 +331,10 @@ public class Ball : MonoBehaviour
     {
         //kierunek tej siły
         float FrictionForceMagnitude = mass * g * friction;
-        FrictionForce = new Vector3((linearVelocity.x/linearVelocity.magnitude), (linearVelocity.y/linearVelocity.magnitude), (linearVelocity.z/linearVelocity.magnitude));
-        FrictionForce = -FrictionForce * FrictionForceMagnitude;
-        
+        FrictionForce = -linearVelocity.normalized;
+        FrictionForce.y = 0;
+        FrictionForce = FrictionForce * FrictionForceMagnitude;
+        Debug.Log(FrictionForce);
     }
 
     public void resetFroces()
@@ -355,8 +356,10 @@ public class Ball : MonoBehaviour
         
         if (this.transform.position.y <= 0.0f && translations.y <= 0.0f) 
         {
+            deviation.y =  Mathf.Abs(translations.y*0.1f);
             if (isCollision)
             {
+                
                 this.transform.position = new Vector3(this.transform.position.x+translations.x, 0, this.transform.position.z+translations.z);
                 isOnground = true;
                
@@ -409,7 +412,7 @@ public class Ball : MonoBehaviour
            // calculateMomentumDrag();
             Vector3 helperRadiusVector = this.GetComponent<SphereCollider>().center - new Vector3(0, -radius, 0);
             angularAcceleration = Dragmomentum*(5/2)/mass/radius/radius;
-            Debug.Log(angularAcceleration);
+           
 
             
         }
