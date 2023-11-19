@@ -19,9 +19,9 @@ public class Ball : MonoBehaviour
     [SerializeField] private float friction;
     [SerializeField] public float radius;
     private Vector3 EarthAngularVelocity=new Vector3(0.0f,0.0000727f,0f);
-    
 
 
+    Vector3 linearDirection = new Vector3(0, 0, 1);
     [SerializeField] private float initialForce = 0;
     private Vector3 distanceFromAxes = new Vector3(0.0f,0.0f,0.0f);
     public Vector3 linearVelocity = new Vector3(0.0f,0.0f,0.0f);
@@ -155,7 +155,7 @@ public class Ball : MonoBehaviour
 
          angularVelocity = Vector3.Cross( forcePosition,forceDirection).normalized * forceTime * 5 / (2 * mass * radius * radius); 
         */
-        Vector3 linearDirection = new Vector3(0, 0, 1);
+        
 
 
         angularVelocity = Vector3.Cross(linearVelocity, linearDirection);
@@ -481,6 +481,7 @@ public class Ball : MonoBehaviour
         gravityForce = new Vector3(0, -g, 0) * mass;
         initialForce = ForceSlider.value; //zaufaj ~Przemysław
         forcePosition = markercontroler.InitialPosition;
+        linearDirection = markercontroler.ForceVector;
 
         calculate_Initial_Velocities();
         A = (3.14f * (2.0f * radius) * (2.0f * radius) / 4.0f);
