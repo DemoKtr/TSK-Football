@@ -1256,7 +1256,7 @@ MonoBehaviour:
   MassSlider: {fileID: 162932271}
   launchButtonController: {fileID: 323444853}
   mass: 0.4
-  friction: 0.7
+  friction: 0.3
   radius: 0.3
   initialForce: 0
   linearVelocity: {x: 0, y: 0, z: 0}
