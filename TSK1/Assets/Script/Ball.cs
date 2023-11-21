@@ -41,6 +41,8 @@ public class Ball : MonoBehaviour
     private Vector3 gravityForce= new Vector3(0.0f,0.0f,0.0f);
     private Vector3 Dragmomentum= new Vector3(0.0f,0.0f,0.0f);
     private Vector3 ArchimedesForce= new Vector3(0.0f,0.0f,0.0f);
+    private Vector3 frictionForce = new Vector3(0.0f, 0.0f, 0.0f);
+    private Vector3 lastfrictionForce = new Vector3(0.0f, 0.0f, 0.0f);
     private float interwalsymulacji;
     private DateTime deltatime=new DateTime();
     public float cd = 0.2f;
@@ -69,7 +71,6 @@ public class Ball : MonoBehaviour
             public float A;
             
            
-            // Start is called before the first frame update
     void Start()
     {
         distanceFromAxes = Vector3.zero;
@@ -88,12 +89,13 @@ public class Ball : MonoBehaviour
         gravityForce = Vector3.zero;
         Dragmomentum = Vector3.zero;
         ArchimedesForce = Vector3.zero;
+        frictionForce = Vector3.zero;
         isKicked = false;
         isCollision = false;
         isOnground = false;
     }
 
-   private float simulationInterval = 0.02f; // Ustaw interwał symulacji na 0.1 sekundy
+   private float simulationInterval = 0.02f; 
    private float ti = 0.0f;
 
     void FixedUpdate()
@@ -145,53 +147,13 @@ public class Ball : MonoBehaviour
         linearVelocity = (force * forceTime) / mass;
 
 
-        /*
-         distanceFromAxes = new Vector3(
-             Mathf.Sqrt(forcePosition.z * forcePosition.z + forcePosition.y * forcePosition.y),
-             Mathf.Sqrt(forcePosition.z * forcePosition.z + forcePosition.x * forcePosition.x),
-             Mathf.Sqrt(forcePosition.x * forcePosition.x + forcePosition.y * forcePosition.y));
-         forceDirection = new Vector3(0, 0, 1);
-         forceDirection= forceDirection * initialForce;
-
-         angularVelocity = Vector3.Cross( forcePosition,forceDirection).normalized * forceTime * 5 / (2 * mass * radius * radius); 
-        */
-        
-
-
         angularVelocity = Vector3.Cross(linearVelocity, linearDirection);
-        //angularVelocity = angularVelocity.normalized;
         float value = initialForce*radius *forceTime * 5.0f / (2.0f * mass * radius * radius); 
       
 
 
     } 
 
-    public void calculateColisionForce()
-    {
-        //x y z to wektor odkształcenia
-        /*
-        calcualtecd();
-        collisionForce.x = 0;//damping * linearVelocity.x + stifftness * deviation.x + kd * linearVelocity.x * linearVelocity.x;
-        collisionForce.y = damping * linearVelocity.y + stifftness * deviation.y - cd * linearVelocity.y * Mathf.Abs(linearVelocity.y) - mass*g;
-        collisionForce.z = 0;//damping * linearVelocity.z + stifftness * deviation.z + kd * linearVelocity.z * linearVelocity.z;
-        Vector3 l1 = linearVelocity;
-        l1.y *= -1;
-        l1.x = l1.x / l1.magnitude;
-        l1.y = l1.y / l1.magnitude;
-        l1.z = l1.z / l1.magnitude;
-        collisionForce.x *= l1.x;
-        collisionForce.y *= l1.y;
-        collisionForce.z *= l1.z;
-        */
-        
-
-        //linearVelocity= (collisionForce * forceTime) / mass;
-
-
-        //linearVelocity += linearVelocityhelper;
-
-
-    }
     
     public void calculateArchimedesForce()
     {
@@ -218,8 +180,9 @@ public class Ball : MonoBehaviour
     }
     public void calculateRotation(float dt)
     {
-        Vector3 Rotation = angularVelocity * dt + angularAcceleration*dt*dt/2;
-        GetComponent<Transform>().Rotate(-Rotation);
+            Vector3 Rotation = (angularVelocity) * dt + (angularAcceleration) * dt * dt / 2;
+            GetComponent<Transform>().Rotate(-Rotation);
+         
     }
     public void calcualtelinearAcceleration()
     {
@@ -240,30 +203,23 @@ public class Ball : MonoBehaviour
 
     public void calculateMomentumDrag()
     {
-        //Dragmomentum = angularVelocity.normalized;
         Dragmomentum = (angularVelocity.normalized * ((float)linearVelocity.magnitude) * ((float)linearVelocity.magnitude)*1.2f * A * 0.5f *0.05f);
-
-       //Dragmomentum *= -1;
-        
 
     }
     
     public void calculateResultForce()
     {
         
-        //calculateFrictionForce();
         if (isOnground)
         {
-            //this.GetComponent<SphereCollider>().center.Set(this.GetComponent<SphereCollider>().center.x,0,this.GetComponent<SphereCollider>().center.z);
             gravityForce = Vector3.zero;
             coriolisForce = Vector3.zero;
             MagnusForce = Vector3.zero;
             
             ArchimedesForce = Vector3.zero;
             calculateFrictionForce();
-            
-            
-           
+
+
         }
         else
         {
@@ -278,22 +234,15 @@ public class Ball : MonoBehaviour
             
 
         }
-        
-        ResultForce =   MagnusForce+coriolisForce + gravityForce + OporForce + FrictionForce + ArchimedesForce;
-        
 
+        ResultForce = MagnusForce+coriolisForce + gravityForce + OporForce + FrictionForce + ArchimedesForce;
+       
 
 
     }
     public void calculateMagnusForce()
     {
         calcualtecm();
-        /*
-        Vector3 forceDirection = (linearVelocity);
-        
-        Vector3 w = new Vector3(-forceDirection.x, forceDirection.y, forceDirection.z);
-        w = w.normalized;
-        */
         Vector3 forceDirection = Vector3.Cross(angularVelocity,linearVelocity);
         forceDirection=forceDirection.normalized;
         float magnusForceMagnitude = (cm*0.1f*1.2f*linearVelocity.magnitude*linearVelocity.magnitude*A)/2.0f;
@@ -349,18 +298,18 @@ public class Ball : MonoBehaviour
         float frictionForceMagnitude = mass * g * friction;
         Vector3 frictionForceDirection = -linearVelocity.normalized;
         frictionForceDirection.y = 0;
-        Vector3 frictionForce = frictionForceDirection * frictionForceMagnitude;
+        frictionForce = frictionForceDirection * frictionForceMagnitude;
     
-        // Zastosowanie tłumienia do prędkości
         linearVelocity *= 0.95f;
+        angularVelocity *= 0.95f;
 
-        // Jeśli prędkość jest wystarczająco bliska zeru, ustaw ją na zero
-        if (linearVelocity.magnitude < 1f)
+        if (linearVelocity.magnitude <0.000001f)
         {
             linearVelocity = Vector3.zero;
+            angularVelocity = Vector3.zero;
+            angularAcceleration = Vector3.zero;
         }
 
-        Debug.Log(frictionForce);
        
     }
 
@@ -382,8 +331,7 @@ public class Ball : MonoBehaviour
         {
             linearVelocity = Vector3.zero;
         }
-        // Sprawdzenie, czy piłka jest na ziemi
-        bool isTouchingGround = (this.transform.position.y <= 0.0f && translations.y <= 0.0f);
+        bool isTouchingGround = ((this.transform.position.y <= 0.01f && translations.y<=0.01f) || (this.transform.position.y <= 0.01f && this.transform.position.y+translations.y <= 0.01f));
 
         if (isTouchingGround) 
         {
@@ -396,21 +344,18 @@ public class Ball : MonoBehaviour
             }
             else
             {
-                // Tutaj ustawienie flagi isOnGround tylko w przypadku braku kolizji
                 isOnground = true; 
                 this.transform.position = new Vector3(this.transform.position.x + translations.x, 0, this.transform.position.z + translations.z);
-                //calculateColisionForce();
+
                 isCollision = true; 
             }
         }
         else
         {
-            // Jeśli nie jest na ziemi, upewnij się, że flaga isCollision jest wyzerowana
             if (isCollision) 
             {
                 isCollision = false;
             }
-            // Tutaj ustawienie flagi isOnGround na false, jeśli nie dotyka ziemi
             isOnground = false;
             this.transform.position += translations;
         }
@@ -445,6 +390,9 @@ public class Ball : MonoBehaviour
         if (linearVelocity.magnitude < 1f)
         {
             linearVelocity = Vector3.zero;
+            angularVelocity = Vector3.zero;
+            angularAcceleration = Vector3.zero;
+            isKicked = false;
         }
 
     }
@@ -459,20 +407,19 @@ public class Ball : MonoBehaviour
         if (isOnground)
         {
             Dragmomentum = Vector3.zero;
-           // angularAcceleration = (Vector3.Cross(FrictionForce, helperRadiusVector))/((5/2)*mass*radius*radius);
             // M/I I =2/5 mr^2
             Vector3 helperRadiusVector = this.GetComponent<SphereCollider>().center - new Vector3(0, -radius, 0);
             
-            angularAcceleration = Vector3.Cross(FrictionForce ,helperRadiusVector)*(5/2)/mass/radius/radius;
+            angularAcceleration += Vector3.Cross(helperRadiusVector,frictionForce)*(5/2)/mass/radius/radius;
+           
         }
         else
         {
-           // calculateMomentumDrag();
             Vector3 helperRadiusVector = this.GetComponent<SphereCollider>().center - new Vector3(0, -radius, 0);
             angularAcceleration = Dragmomentum*(5/2)/mass/radius/radius;
-           
+         
 
-            
+
         }
     }
     public void Launch()
@@ -510,6 +457,7 @@ public class Ball : MonoBehaviour
         gravityForce = Vector3.zero;
         Dragmomentum = Vector3.zero;
         ArchimedesForce = Vector3.zero;
+        frictionForce = Vector3.zero;
         isKicked = false;
         isCollision = false;
         isOnground = false;
