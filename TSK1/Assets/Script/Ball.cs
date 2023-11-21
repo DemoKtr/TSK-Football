@@ -428,7 +428,7 @@ public class Ball : MonoBehaviour
         gravityForce = new Vector3(0, -g, 0) * mass;
         initialForce = ForceSlider.value; //zaufaj ~Przemysław
         forcePosition = markercontroler.InitialPosition;
-        linearDirection = markercontroler.ForceVector;
+        linearDirection = markercontroler.ForceVector.normalized;
 
         calculate_Initial_Velocities();
         A = (3.14f * (2.0f * radius) * (2.0f * radius) / 4.0f);
