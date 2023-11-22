@@ -264,15 +264,15 @@ public class Ball : MonoBehaviour
         float tester = angularVelocity.magnitude*radius/linearVelocity.magnitude;
         if (tester <= 0.1f)
         {
-            cm = 0.1f;
+            cm = -0.1f;
         }
         else if (tester <= 0.2f)
         {
-            cd = -0.1f;
+            cd = 0.1f;
         }
         else if (tester <= 0.3f)
         {
-            cd = 0.15f;
+            cd = -0.15f;
         }
         
     }
@@ -436,6 +436,7 @@ public class Ball : MonoBehaviour
         launchButtonController.Hited = true;
 
     }
+
 
     public void ResetValues()
     {
